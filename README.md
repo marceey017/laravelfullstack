@@ -23,7 +23,7 @@ Windows alatt `cp` helyett `copy` használandó. A `php artisan test` tesztek SQ
 - `manufacturers`: `id`, kötelező `name` és `country`, időbélyegek. A gyártónév a gyártói űrlapon egyedi.
 - `car_models`: `id`, kötelező `manufacturer_id`, `name`, `release_year`, időbélyegek.
 - Egy gyártóhoz sok modell tartozik. Gyártó törlése a modelljeit is törli.
-- A `/` átirányít a `/manufacturers` oldalra. A `manufacturers` resource útvonalak és a `?search=` keresés készen vannak.
+- A `/` átirányít a `/manufacturers` oldalra. A `manufacturers` és a `car_models` resource útvonalak, a `?search=` keresés és a modelleknél a `?manufacturer_id=` gyártószűrés készen vannak.
 
 ## Csapatmunka
 
@@ -33,4 +33,4 @@ Minden tag a saját GitHub-fiókjából commitoljon külön branche-re. A git sz
 - Második backendes: modell CRUD, keresés és gyártó szerinti szűrés, validáció és tesztek. Blade/CSS/JS fájlokhoz nem nyúl.
 - Frontendes: minden gyártó és modell Blade oldal, Bootstrap, kereső/szűrő/űrlapok, hiba- és sikerüzenetek.
 
-A második backendes részletes feladatát a [BACKEND_HANDOFF.md](docs/BACKEND_HANDOFF.md) tartalmazza.
+A frontendes részletes feladatát a [FRONTEND_HANDOFF.md](docs/FRONTEND_HANDOFF.md) tartalmazza.
