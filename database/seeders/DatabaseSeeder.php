@@ -2,24 +2,32 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\CarModel;
+use App\Models\Manufacturer;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $cars = [
+            ['Volkswagen', 'Németország', [['Golf', 1974], ['Passat', 1973]]],
+            ['BMW', 'Németország', [['3-as sorozat', 1975], ['5-ös sorozat', 1972]]],
+            ['Toyota', 'Japán', [['Corolla', 1966], ['Yaris', 1999]]],
+        ];
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        foreach ($cars as [$name, $country, $models]) {
+            $manufacturer = Manufacturer::firstOrCreate(
+                ['name' => $name],
+                ['country' => $country]
+            );
+
+            foreach ($models as [$modelName, $startYear]) {
+                CarModel::firstOrCreate(
+                    ['manufacturer_id' => $manufacturer->id, 'name' => $modelName],
+                    ['release_year' => $startYear]
+                );
+            }
+        }
     }
 }
