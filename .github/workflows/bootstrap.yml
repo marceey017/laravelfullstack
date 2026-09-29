@@ -1,0 +1,39 @@
+name: Bootstrap Laravel 12
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Stop if Laravel already exists
+        if: hashFiles('composer.json') != ''
+        run: echo "Laravel project already exists."
+
+      - name: Create Laravel 12 project
+        if: hashFiles('composer.json') == ''
+        run: |
+          composer create-project laravel/laravel:^12.0 /tmp/laravel --prefer-dist --no-interaction
+          cp -a /tmp/laravel/. .
+          rm -rf /tmp/laravel
+
+      - name: Commit generated project
+        if: hashFiles('composer.json') == ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: scaffold Laravel 12 application"
+          git push
