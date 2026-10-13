@@ -1,0 +1,63 @@
+name: Laravel frontend checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_sqlite, sqlite3, dom, xml, xmlwriter, curl, fileinfo
+          coverage: none
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Test Laravel and compile Blade
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan test
+          php artisan view:cache
+          vendor/bin/pint --test
+      - name: Install browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/bootstrap-browser" --no-package-lock --ignore-scripts playwright@1.56.1
+          "$RUNNER_TEMP/bootstrap-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Browser CRUD and desktop/mobile checks
+        env:
+          APP_URL: http://127.0.0.1:8000
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ${{ runner.temp }}/bootstrap-ui.sqlite
+          CACHE_STORE: file
+          SESSION_DRIVER: file
+        run: |
+          touch "$DB_DATABASE"
+          php artisan config:clear
+          php artisan migrate --seed --force
+          php artisan serve --host=127.0.0.1 --port=8000 > "$RUNNER_TEMP/laravel-browser.log" 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/manufacturers > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:8000/manufacturers > /dev/null
+          NODE_PATH="$RUNNER_TEMP/bootstrap-browser/node_modules" node tests/Browser/bootstrap-smoke.cjs
+      - name: Save desktop and mobile screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bootstrap-screenshots
+          path: artifacts/bootstrap
+          if-no-files-found: ignore
+          retention-days: 7

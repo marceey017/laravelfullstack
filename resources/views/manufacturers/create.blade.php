@@ -3,22 +3,18 @@
 @section('title', 'Új gyártó')
 
 @section('content')
-    <h2>Új gyártó</h2>
-
-    <form method="POST" action="{{ route('manufacturers.store') }}">
-        @csrf
-
-        <p>
-            <label for="name">Név:</label><br>
-            <input id="name" name="name" value="{{ old('name') }}" required>
-        </p>
-
-        <p>
-            <label for="country">Ország:</label><br>
-            <input id="country" name="country" value="{{ old('country') }}" required>
-        </p>
-
-        <button type="submit">Mentés</button>
-        <a href="{{ route('manufacturers.index') }}">Mégse</a>
-    </form>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-6">
+            <a class="d-inline-block mb-3" href="{{ route('manufacturers.index') }}">Vissza a gyártókhoz</a>
+            <h1 class="h2 mb-4">Új gyártó</h1>
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ route('manufacturers.store') }}">
+                        @csrf
+                        @include('manufacturers._form', ['manufacturer' => null])
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
