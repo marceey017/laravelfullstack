@@ -4,7 +4,9 @@ Autógyártók és autómodellek kezelése Laravel 12-vel, két kapcsolódó ada
 
 ## Indítás XAMPP mellett
 
-PHP 8.2+ és Composer szükséges. XAMPP-ban indítsd el a MySQL-t, majd phpMyAdminban hozz létre egy `laravelfullstack` nevű adatbázist. Ha a helyi root jelszó vagy port eltér, módosítsd a `.env` fájlban.
+**PHP 8.3+ és Composer szükséges a rögzített fejlesztői csomagok telepítéséhez.** A Laravel alkalmazás alapkövetelménye PHP 8.2, de a meglévő `composer.lock` fájlban szereplő Pint 1.32.1 már PHP 8.3-at igényel. Ezt a Bootstrap-módosítás nem változtatta meg. A parancssori verziót a `php -v` paranccsal ellenőrizheted.
+
+XAMPP-ban indítsd el a MySQL-t, majd phpMyAdminban hozz létre egy `laravelfullstack` nevű adatbázist. Ha a helyi root jelszó vagy port eltér, módosítsd a `.env` fájlban.
 
 ```bash
 git clone https://github.com/marceey017/laravelfullstack.git
